@@ -9,7 +9,3 @@ type User struct {
 	Password string `json:"password"`
 	Token    string `json:"token"`
 }
-
-// type GormUserModel struct {
-// 	db *gorm.DB
-// }

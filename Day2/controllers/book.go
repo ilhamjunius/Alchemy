@@ -1,22 +1,20 @@
 package controllers
 
 import (
-	"Alterra/batch5/ORM/Part1/lib/database"
-	"Alterra/batch5/ORM/Part1/models"
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/alchemy/Day2/lib/database"
+	"github.com/alchemy/Day2/models"
 	"github.com/labstack/echo/v4"
 )
 
 func GetAllBooksController(c echo.Context) error {
 	res, err := database.GetAllBooksController()
-	// var books []models.Book
-	// fmt.Println(books)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	// fmt.Println(books)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success get all books",
@@ -26,7 +24,6 @@ func GetAllBooksController(c echo.Context) error {
 
 // get book by id
 func GetBookController(c echo.Context) error {
-	// your solution here
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "Incorrect book ID")
@@ -53,13 +50,11 @@ func CreateBookController(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success create new book",
-		"book":    book,
 	})
 }
 
 // delete book by id
 func DeleteBookController(c echo.Context) error {
-	// your solution here
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "Incorrect book ID")
@@ -68,7 +63,7 @@ func DeleteBookController(c echo.Context) error {
 	if _, err := database.DeleteBookController(id); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	// fmt.Println(res)
+
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success delete book by id",
 	})
@@ -76,22 +71,18 @@ func DeleteBookController(c echo.Context) error {
 
 // update book by id
 func UpdateBookController(c echo.Context) error {
-	// your solution here
 	book := models.Book{}
 	c.Bind(&book)
 	id, err := strconv.Atoi(c.Param("id"))
-	book.ID = uint(id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "Incorrect book ID")
 	}
-	// newBook := models.Book{}
 	if _, err := database.UpdateBookController(book.Tittle, book.Author, id); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	// fmt.Println(book)
+	book.ID = id
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "success create new book",
-		"book":    book,
+		"message": fmt.Sprintf("success update book id %v", id),
 	})
 
 }

@@ -1,9 +1,9 @@
 package configs
 
 import (
-	"Alterra/batch5/ORM/Part1/models"
 	"fmt"
 
+	"github.com/alchemy/Day2/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -49,5 +49,4 @@ func InitDB() {
 }
 func InitialMigration() {
 	DB.AutoMigrate(&models.User{})
-	DB.AutoMigrate(&models.Book{})
 }

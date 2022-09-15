@@ -1,70 +1,69 @@
 package database
 
 import (
-	"Alterra/batch5/ORM/Part1/configs"
-	"Alterra/batch5/ORM/Part1/models"
+	"github.com/alchemy/Day2/models"
 )
+
+var books = []models.Book{
+	{ID: 1, Tittle: "Science", Author: "Ilham Junius"},
+	{ID: 2, Tittle: "Technology", Author: "Ilham"},
+	{ID: 3, Tittle: "Art", Author: "Junius"},
+	{ID: 4, Tittle: "Tale", Author: "Rudi"},
+}
 
 // get all books
 
 func GetAllBooksController() ([]models.Book, error) {
-	var books []models.Book
-
-	if err := configs.DB.Find(&books).Error; err != nil {
-		return nil, err
-	}
 
 	return books, nil
 }
 
 // get book by id
 func GetBookController(id int) ([]models.Book, error) {
-	// your solution here
 	// id, err := strconv.Atoi(c.Param("id"))
 	// if err != nil {
 	// 	return c.JSON(http.StatusBadRequest, "Incorrect book ID")
 	// }
 
 	var book []models.Book
-
-	if err := configs.DB.First(&book, id).Error; err != nil {
-		return nil, err
-	}
+	book = append(book, books[id-1])
 	return book, nil
 }
 
 // create new book
-func CreateBookController(u models.Book) ([]models.Book, error) {
-	var book []models.Book
+func CreateBookController(book models.Book) ([]models.Book, error) {
+	book.ID = len(books) + 1
+	books = append(books, book)
 
-	if err := configs.DB.Save(&u).Error; err != nil {
-		return nil, err
-	}
-	return book, nil
+	return books, nil
 }
 
 // delete book by id
 func DeleteBookController(id int) ([]models.Book, error) {
-	// your solution here
-	var book []models.Book
-	if err := configs.DB.Find(&book, "id=?", id).Error; err != nil {
-		return book, err
+	var newBooks = []models.Book{}
+	for _, book := range books {
+		if book.ID != id {
+			newBooks = append(newBooks, book)
+		}
+
 	}
-	if err := configs.DB.Delete(&book).Error; err != nil {
-		return book, nil
-	}
-	return book, nil
+	books = newBooks
+	return books, nil
 }
 
 // update book by id
 func UpdateBookController(tittle, author string, id int) ([]models.Book, error) {
-	// your solution here
-	var book []models.Book
+	var newBooks []models.Book
 
-	if err := configs.DB.Model(&models.Book{}).Where("id = ?", id).Updates(models.Book{Tittle: tittle, Author: author}).Error; err != nil {
-		return book, err
+	books[id-1].Author = author
+	books[id-1].Tittle = tittle
+	for _, book := range books {
+		if book.ID == id {
+			newBooks = append(newBooks, book)
+			break
+		}
+
 	}
-	// fmt.Println(book)
-	return book, nil
+	return newBooks, nil
 
 }
